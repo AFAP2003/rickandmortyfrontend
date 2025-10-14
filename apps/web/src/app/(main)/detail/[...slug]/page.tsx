@@ -10,8 +10,9 @@ import { Dialog, DialogTrigger, DialogContent, DialogHeader, DialogTitle, Dialog
 import { Button } from "@/components/shadcn-ui/button";
 import { Label } from "@/components/shadcn-ui/label";
 import { Input } from "@/components/shadcn-ui/input";
-import { toast } from "@/hooks/use-toast";
 import { assignCharacterToLocation, getCharacterLocation, getLocations } from "@/lib/local-storage";
+import toast from 'react-hot-toast'
+import test from "node:test";
 
 export default function detailPage() {
 const { characterDetail,isloading,  fetchCharacterById } = CharacterApi();
@@ -37,11 +38,8 @@ const [character, setCharacter] = useState<Character | null>(null);
 
    const handleAssignLocation = () => {
     if (!locationName.trim()) {
-      toast({
-        title: "Error",
-        description: "Please enter a location name",
-        status: "error",
-      });
+     
+      toast.error('Please enter a location name');
       return;
     }
 
@@ -55,11 +53,8 @@ const [character, setCharacter] = useState<Character | null>(null);
         setAssignedLocation(locationName.trim());
         setIsDialogOpen(false);
         setLocationName('');
-         toast({
-          title: "Success",
-          description: `Character assigned to ${locationName.trim()}`,
-          status: "success",
-        });
+        toast.success(`Character assigned to ${locationName.trim()}`);
+
       }
     } else if (!existingLocation) {
       // Creating new location
@@ -68,18 +63,12 @@ const [character, setCharacter] = useState<Character | null>(null);
         setAssignedLocation(locationName.trim());
         setIsDialogOpen(false);
         setLocationName('');
-         toast({
-          title: "Success",
-          description: `New location created: ${locationName.trim()}`,
-          status: "success",
-        });
+        toast.success(`New location created: ${locationName.trim()}`);
+
       }
     } else {
-      toast({
-        title: "Error",
-        description: "Character already in this location",
-        status: "error",
-      });
+        toast.error('Character already in this location');
+
       
     }
   };

@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { API_URL } from "../constants";
-import { toast } from "@/hooks/use-toast";
 import { Character } from "../interfaces/character.interface";
+import toast from 'react-hot-toast'
 
 export default function CharacterApi() {
   const [characters, setCharacter] = useState<Character[]>([]);
@@ -55,17 +55,11 @@ export default function CharacterApi() {
         console.log('Characters fetched successfully:', results);
         return results;
       } else {
-        toast({
-          variant: 'destructive',
-          description: 'Gagal Mengambil Data Karakter.',
-        });
+       toast.error('Gagal Mengambil Data Karakter.');
         console.error('GraphQL Error:', data.errors || data);
       }
     } catch (error) {
-      toast({
-        variant: 'destructive',
-        description: 'Error Mengambil Data Karakter.',
-      });
+     toast.error('Error Mengambil Data Karakter.');
       console.error('Error fetching GraphQL data:', error);
     } finally {
       setIsLoading(false);
@@ -126,16 +120,11 @@ export default function CharacterApi() {
         console.log('Character detail fetched:', result);
         return result;
       } else {
-        toast({
-          variant: 'destructive',
-          description: 'Gagal Mengambil Detail Karakter.',
-        });
+        toast.error('Gagal Mengambil Detail Karakter.');
       }
     } catch (error) {
-      toast({
-        variant: 'destructive',
-        description: 'Error Mengambil Detail Karakter.',
-      });
+    
+      toast.error('Error Mengambil Detail Karakter.');
     } finally {
       setIsLoading(false);
     }
