@@ -1,5 +1,6 @@
 'use client'
 import { Card } from "@/components/shadcn-ui/card";
+import { Badge } from "@/components/shadcn-ui/badge";
 import CharacterApi from "@/lib/apis/character.api";
 import { Character } from "@/lib/interfaces/character.interface";
 import { useParams } from "next/navigation";
@@ -15,6 +16,15 @@ useEffect(() => {
     }
   }, [characterId]);
 const [character, setCharacter] = useState<Character | null>(null);
+  if (!characterDetail) {
+    return (
+      <div className="min-h-screen w-full bg-[url('/space.png')] bg-cover bg-center p-6 flex items-center justify-center">
+        <div className="text-white text-2xl">Character not found</div>
+      </div>
+    );
+  }
+
+  
   return (
     <div className="grid md:grid-cols-2 gap-8">
         {/* Image Card */}
@@ -33,8 +43,8 @@ const [character, setCharacter] = useState<Character | null>(null);
               <h1 className="text-3xl md:text-4xl font-bold text-foreground">
                 {characterDetail.name}
               </h1>
-              <Badge className={`${statusColor} border-0`}>
-                {character.status}
+              <Badge className={` border-0`}>
+                {characterDetail.status}
               </Badge>
             </div>
 
@@ -47,12 +57,12 @@ const [character, setCharacter] = useState<Character | null>(null);
                 <p className="text-muted-foreground">Gender</p>
                 <p className="text-foreground font-medium">{characterDetail.gender}</p>
               </div>
-              {characterDetail.type && (
+              {/* {characterDetail.type && (
                 <div className="col-span-2">
                   <p className="text-muted-foreground">Type</p>
                   <p className="text-foreground font-medium">{characterDetail.type}</p>
                 </div>
-              )}
+              )} */}
             </div>
 
             <div className="space-y-2 pt-4 border-t border-border/50">
@@ -67,7 +77,7 @@ const [character, setCharacter] = useState<Character | null>(null);
             </div>
 
             {/* Assigned Location */}
-            {assignedLocation && (
+            {/* {assignedLocation && (
               <div className="bg-accent/10 border border-accent/30 rounded-lg p-4 flex items-center gap-2">
                 <CheckCircle2 className="w-5 h-5 text-accent" />
                 <div className="flex-1">
@@ -75,10 +85,10 @@ const [character, setCharacter] = useState<Character | null>(null);
                   <p className="text-foreground font-medium">{assignedLocation}</p>
                 </div>
               </div>
-            )}
+            )} */}
 
             {/* Assign Location Button */}
-            <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
+            {/* <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
               <DialogTrigger asChild>
                 <Button className="w-full bg-primary hover:bg-primary/90 text-primary-foreground shadow-portal">
                   <MapPin className="w-4 h-4 mr-2" />
@@ -112,7 +122,7 @@ const [character, setCharacter] = useState<Character | null>(null);
                   </Button>
                 </div>
               </DialogContent>
-            </Dialog>
+            </Dialog> */}
           </div>
         </Card>
       </div> 
