@@ -6,6 +6,7 @@ import toast from 'react-hot-toast'
 export default function CharacterApi() {
   const [characters, setCharacter] = useState<Character[]>([]);
   const [characterDetail, setCharacterDetail] = useState<Character | null>(null);
+  const [charactersById, setCharactersById] = useState<Character[]>([]);
   const [isloading, setIsLoading] = useState<boolean>(false);
   
    const fetchCharacters = async ( search: string = '') => {
@@ -26,6 +27,12 @@ export default function CharacterApi() {
             species
             gender
             image
+            origin {
+              name
+            }
+            location {
+              name
+            }
           }
         }
       }
@@ -115,7 +122,8 @@ export default function CharacterApi() {
       const data = await response.json();
 
       if (response.ok && data.data) {
-        const result = data.data.character;
+        const responseData = data.data
+        const result = responseData.character;
         setCharacterDetail(result);
         console.log('Character detail fetched:', result);
         return result;
@@ -130,13 +138,63 @@ export default function CharacterApi() {
     }
   };
 
+  const fetchCharactersByIds = async (ids: string[]) => {
+    setIsLoading(true);
+
+    const query = `
+      query ($ids: [ID!]!) {
+        charactersByIds(ids: $ids) {
+          id
+          name
+          status
+          species
+          image
+        }
+      }
+    `;
+
+    const variables = {
+      ids,
+    };
+
+    try {
+      const response = await fetch(API_URL, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ query, variables }),
+      });
+
+      const data = await response.json();
+
+      if (response.ok && data.data) {
+        const responseData = data.data
+        const results = responseData.charactersByIds;
+        setCharactersById(results);
+        console.log('Characters by IDs fetched:', results);
+        return results;
+      } else {
+        toast.error('Gagal Mengambil Data Karakter.');
+        console.error('GraphQL Error:', data.errors || data);
+      }
+    } catch (error) {
+      toast.error('Error Mengambil Data Karakter.');
+      console.error('Error fetching GraphQL data:', error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
 
   return {
     characters,
     characterDetail,
+    charactersById,
     isloading,
     fetchCharacters,
-    fetchCharacterById
+    fetchCharacterById,
+    fetchCharactersByIds
   };
 
   

@@ -1,3 +1,4 @@
+import NavigationBar from "@/components/navbar/navigation-bar"
 export default function MainLayout({
   children
 }: {
@@ -5,6 +6,7 @@ export default function MainLayout({
 }) {
   return (
   <>
+  <NavigationBar />
   {children}
     </>)
 }
