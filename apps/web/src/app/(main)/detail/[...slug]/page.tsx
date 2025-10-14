@@ -48,7 +48,7 @@ const [character, setCharacter] = useState<Character | null>(null);
     const locations = getLocations();
     const existingLocation = locations.find(loc => loc.locationName.toLowerCase() === locationName.trim().toLowerCase());
     
-    if (existingLocation && !existingLocation.characterIds.includes(id || '')) {
+    if (existingLocation && !existingLocation.characterIds.includes(characterId || '')) {
       // Location exists, adding character to it
       const success = assignCharacterToLocation(characterId || '', locationName.trim());
       if (success) {
