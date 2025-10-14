@@ -37,7 +37,11 @@ const [character, setCharacter] = useState<Character | null>(null);
 
    const handleAssignLocation = () => {
     if (!locationName.trim()) {
-      toast.error('Please enter a location name');
+      toast({
+        title: "Error",
+        description: "Please enter a location name",
+        status: "error",
+      });
       return;
     }
 
