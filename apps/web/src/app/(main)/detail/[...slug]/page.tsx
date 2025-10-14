@@ -1,0 +1,120 @@
+'use client'
+import { Card } from "@/components/shadcn-ui/card";
+import CharacterApi from "@/lib/apis/character.api";
+import { Character } from "@/lib/interfaces/character.interface";
+import { useParams } from "next/navigation";
+import { useEffect, useState } from "react";
+
+export default function detailPage() {
+const { characterDetail,isloading,  fetchCharacterById } = CharacterApi();
+const params = useParams();
+  const characterId = params.slug?.[0]; 
+useEffect(() => {
+    if (characterId) {
+      fetchCharacterById(characterId);
+    }
+  }, [characterId]);
+const [character, setCharacter] = useState<Character | null>(null);
+  return (
+    <div className="grid md:grid-cols-2 gap-8">
+        {/* Image Card */}
+        <Card className="overflow-hidden bg-gradient-card border-border/50">
+          <img 
+            src={characterDetail.image} 
+            alt={characterDetail.name}
+            className="w-full aspect-square object-cover"
+          />
+        </Card>
+
+        {/* Details Card */}
+        <Card className="p-6 bg-gradient-card border-border/50 space-y-6">
+          <div className="space-y-4">
+            <div className="flex items-start justify-between">
+              <h1 className="text-3xl md:text-4xl font-bold text-foreground">
+                {characterDetail.name}
+              </h1>
+              <Badge className={`${statusColor} border-0`}>
+                {character.status}
+              </Badge>
+            </div>
+
+            <div className="grid grid-cols-2 gap-4 text-sm">
+              <div>
+                <p className="text-muted-foreground">Species</p>
+                <p className="text-foreground font-medium">{characterDetail.species}</p>
+              </div>
+              <div>
+                <p className="text-muted-foreground">Gender</p>
+                <p className="text-foreground font-medium">{characterDetail.gender}</p>
+              </div>
+              {characterDetail.type && (
+                <div className="col-span-2">
+                  <p className="text-muted-foreground">Type</p>
+                  <p className="text-foreground font-medium">{characterDetail.type}</p>
+                </div>
+              )}
+            </div>
+
+            <div className="space-y-2 pt-4 border-t border-border/50">
+              <div>
+                <p className="text-muted-foreground text-sm">Origin</p>
+                <p className="text-foreground">{characterDetail.origin.name}</p>
+              </div>
+              <div>
+                <p className="text-muted-foreground text-sm">Last known location</p>
+                <p className="text-foreground">{characterDetail.location.name}</p>
+              </div>
+            </div>
+
+            {/* Assigned Location */}
+            {assignedLocation && (
+              <div className="bg-accent/10 border border-accent/30 rounded-lg p-4 flex items-center gap-2">
+                <CheckCircle2 className="w-5 h-5 text-accent" />
+                <div className="flex-1">
+                  <p className="text-sm text-muted-foreground">Assigned to</p>
+                  <p className="text-foreground font-medium">{assignedLocation}</p>
+                </div>
+              </div>
+            )}
+
+            {/* Assign Location Button */}
+            <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
+              <DialogTrigger asChild>
+                <Button className="w-full bg-primary hover:bg-primary/90 text-primary-foreground shadow-portal">
+                  <MapPin className="w-4 h-4 mr-2" />
+                  {assignedLocation ? 'Change Location' : 'Assign to Location'}
+                </Button>
+              </DialogTrigger>
+              <DialogContent className="bg-card border-border/50">
+                <DialogHeader>
+                  <DialogTitle>Assign Character to Location</DialogTitle>
+                  <DialogDescription>
+                    Enter a location name. If the location doesn't exist, it will be created.
+                  </DialogDescription>
+                </DialogHeader>
+                <div className="space-y-4">
+                  <div>
+                    <Label htmlFor="location">Location Name</Label>
+                    <Input
+                      id="location"
+                      placeholder="e.g., Earth C-137"
+                      value={locationName}
+                      onChange={(e) => setLocationName(e.target.value)}
+                      className="bg-background border-border/50"
+                      onKeyPress={(e) => e.key === 'Enter' && handleAssignLocation()}
+                    />
+                  </div>
+                  <Button 
+                    onClick={handleAssignLocation}
+                    className="w-full bg-primary hover:bg-primary/90 text-primary-foreground"
+                  >
+                    Assign Location
+                  </Button>
+                </div>
+              </DialogContent>
+            </Dialog>
+          </div>
+        </Card>
+      </div> 
+)
+}
