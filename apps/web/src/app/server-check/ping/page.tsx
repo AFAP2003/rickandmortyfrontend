@@ -2,13 +2,13 @@
 
 import { useEffect, useState } from 'react'
 
-import { API_BASE_URL } from '@/lib/constants'
+import { API_URL } from '@/lib/constants'
 
 export default function PingPage() {
   const [message, setMessage] = useState<string>('')
 
   const pingServer = async () => {
-    const response = await fetch(`${API_BASE_URL}/ping`)
+    const response = await fetch(`${API_URL}/ping`)
 
     const ping = await response.json()
 
