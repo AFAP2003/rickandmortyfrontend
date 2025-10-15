@@ -7,9 +7,10 @@ export default function CharacterApi() {
   const [characters, setCharacter] = useState<Character[]>([]);
   const [characterDetail, setCharacterDetail] = useState<Character | null>(null);
   const [charactersById, setCharactersById] = useState<Character[]>([]);
+  const [pageInfo, setPageInfo] = useState<{ count: number; pages: number }>({ count: 0, pages: 0 }); // ← ADD THIS LINE
   const [isloading, setIsLoading] = useState<boolean>(false);
   
-   const fetchCharacters = async ( search: string = '') => {
+   const fetchCharacters = async ( search: string = '',page: number=1) => {
     setIsLoading(true);
 
     // GraphQL query string
@@ -40,7 +41,7 @@ export default function CharacterApi() {
 
     // GraphQL variables
     const variables = {
-    //   page,
+      page,
       name: search,
     };
 
@@ -59,6 +60,7 @@ export default function CharacterApi() {
         const responsedata = data.data 
         const results = responsedata.characters.results;
         setCharacter(results);
+        setPageInfo(responsedata.characters.info); // ← ADD THIS LINE
         console.log('Characters fetched successfully:', results);
         return results;
       } else {
@@ -192,6 +194,7 @@ export default function CharacterApi() {
     characterDetail,
     charactersById,
     isloading,
+    pageInfo, // ← ADD THIS LINE
     fetchCharacters,
     fetchCharacterById,
     fetchCharactersByIds

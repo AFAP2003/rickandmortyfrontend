@@ -9,17 +9,30 @@ import {
   CardHeader,
   CardTitle
 } from '@/components/shadcn-ui/card'
-import { useEffect } from 'react'
+import { useEffect, useState } from 'react'
 import ProfileApi from '@/lib/apis/character.api'
 import Link from 'next/link'
-import { Loader2 } from 'lucide-react'
+import { ChevronLeft, ChevronRight, Loader2 } from 'lucide-react'
+import { Button } from '@/components/shadcn-ui/button'
+import { Pagination, PaginationContent, PaginationEllipsis, PaginationItem, PaginationLink, PaginationNext, PaginationPrevious } from '@/components/shadcn-ui/pagination'
 
 export default function Home() {
-  const { characters, isloading, fetchCharacters } = ProfileApi()
-  
+  const { pageInfo,characters, isloading, fetchCharacters } = ProfileApi()
+  const [currentPage, setCurrentPage] = useState(1)
+  const [searchQuery, setSearchQuery] = useState('')
+
   useEffect(() => {
-    fetchCharacters('')
-  }, [])
+    fetchCharacters('',currentPage)
+  }, [currentPage])
+
+  useEffect(() => {
+    // Debounce search - wait 500ms after user stops typing
+    const timeoutId = setTimeout(() => {
+      fetchCharacters(searchQuery, currentPage)
+    }, 500)
+
+    return () => clearTimeout(timeoutId)
+  }, [searchQuery, currentPage])
 
   const getStatusColor = (status: string) => {
     switch (status?.toLowerCase()) {
@@ -44,12 +57,42 @@ export default function Home() {
     }
   }
 
+  const handleSearch = (value: string) => {
+    setSearchQuery(value)
+    setCurrentPage(1) // Reset to page 1 when searching
+  }
+
+  
+  const handlePageClick = (page: number) => {
+    setCurrentPage(page)
+    window.scrollTo({ top: 0, behavior: 'smooth' })
+  }
+
+  // Generate page numbers to display
+  const getPageNumbers = () => {
+    const pages = []
+    const maxPagesToShow = 5
+    let startPage = Math.max(1, currentPage - Math.floor(maxPagesToShow / 2))
+    let endPage = Math.min(pageInfo.pages, startPage + maxPagesToShow - 1)
+
+    if (endPage - startPage < maxPagesToShow - 1) {
+      startPage = Math.max(1, endPage - maxPagesToShow + 1)
+    }
+
+    for (let i = startPage; i <= endPage; i++) {
+      pages.push(i)
+    }
+
+    return pages
+  }
+
+
   return (
     <div className="min-h-screen w-full bg-[url('/space.png')] bg-cover bg-center bg-no-repeat p-6">
       <div className='flex min-h-screen w-full flex-col items-center justify-start gap-10'>
         <Image src='/rick&mortytitle.png' alt='Logo' width={300} height={300} />
         <div className='w-full'>
-          <SearchBox />
+          <SearchBox onSearch={handleSearch} />
         </div>
         <div className='flex h-full w-full items-center justify-center gap-4'>
           <hr className='flex-1 border-t-2 border-[#42b1cc]' />
@@ -114,6 +157,38 @@ export default function Home() {
             })}
           </div>
         )}
+
+        {/* Simple Pagination */}
+        {pageInfo.pages > 1 && (
+          <Pagination className='pb-10'>
+            <PaginationContent className='gap-4'>
+              <PaginationItem>
+                <PaginationPrevious 
+                  onClick={() => currentPage > 1 && handlePageClick(currentPage - 1)}
+                  className={`cursor-pointer border-[#42b1cc] bg-black text-white hover:bg-[#42b1cc]/20 ${
+                    currentPage === 1 ? 'pointer-events-none opacity-50' : ''
+                  }`}
+                />
+              </PaginationItem>
+
+              <div className='flex items-center px-4 text-white'>
+                <span className='text-sm font-medium'>
+                  Page {currentPage} of {pageInfo.pages}
+                </span>
+              </div>
+
+              <PaginationItem>
+                <PaginationNext 
+                  onClick={() => currentPage < pageInfo.pages && handlePageClick(currentPage + 1)}
+                  className={`cursor-pointer border-[#42b1cc] bg-black text-white hover:bg-[#42b1cc]/20 ${
+                    currentPage === pageInfo.pages ? 'pointer-events-none opacity-50' : ''
+                  }`}
+                />
+              </PaginationItem>
+            </PaginationContent>
+          </Pagination>
+        )}
+        
 
         {/* No Characters State */}
         {!isloading && (!characters || characters.length === 0) && (
