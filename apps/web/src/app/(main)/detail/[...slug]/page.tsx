@@ -25,6 +25,7 @@ import toast from 'react-hot-toast'
 import Link from 'next/link'
 import LoadingOverlay from '@/components/loading-overlay'
 import { locationSchema } from '@/lib/validations/location.validation'
+import NotFound from '@/app/not-found'
 
 export default function DetailPage() {
   const { characterDetail, isloading, fetchCharacterById } = CharacterApi()
@@ -68,7 +69,7 @@ export default function DetailPage() {
       await locationSchema.validate({ locationName }, { abortEarly: false })
 
       const locations = getLocations()
-      const existingLocation = locations.find(
+      const existingLocation = locations.find( 
         (loc) =>
           loc.locationName.toLowerCase() === locationName.trim().toLowerCase()
       )
@@ -132,7 +133,7 @@ export default function DetailPage() {
   if (!characterDetail) {
     return (
       <div className="flex min-h-screen w-full items-center justify-center bg-[url('/space.png')] bg-cover bg-center p-6">
-        <div className='text-2xl text-white'>Character not found</div>
+        <NotFound/>
       </div>
     )
   }
