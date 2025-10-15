@@ -151,7 +151,7 @@ export default function DetailPage() {
                 {characterDetail.name}
               </h1>
               <Badge
-                className={`${getStatusColor(characterDetail.status)} rounded-full border-0`}
+                className={`${getStatusColor(characterDetail.status).bg} text-white rounded-full border-0`}
               >
                 {characterDetail.status}
               </Badge>
