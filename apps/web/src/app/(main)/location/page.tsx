@@ -5,6 +5,7 @@ import { getLocations } from '@/lib/local-storage'
 import { Badge, Loader2, MapPin, Users } from 'lucide-react'
 import Link from 'next/link'
 import { useEffect, useState } from 'react'
+import LocationPageSkeleton from './skeleton'
 
 export default function locationPage() {
   const { characterDetail, isloading, fetchCharacterById } = CharacterApi()
@@ -110,10 +111,12 @@ export default function locationPage() {
               </h2>
 
               {isloading ? (
-                <div className='flex items-center justify-center py-20'>
-                  <Loader2 className='h-8 w-8 animate-spin text-[#bede3d]' />
+                <div className='grid gap-4 sm:grid-cols-2'>
+                  {[...Array(4)].map((_, index) => (
+                    <LocationPageSkeleton key={index} />
+                  ))}
                 </div>
-              ) : (
+              )  : (
                 <div className='grid gap-4 sm:grid-cols-2'>
                   {characters.map((character: any) => {
                     const statusColors = getStatusColor(character.status)

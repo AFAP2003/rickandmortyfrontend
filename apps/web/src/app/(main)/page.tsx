@@ -15,6 +15,7 @@ import Link from 'next/link'
 import { ChevronLeft, ChevronRight, Loader2 } from 'lucide-react'
 import { Button } from '@/components/shadcn-ui/button'
 import { Pagination, PaginationContent, PaginationEllipsis, PaginationItem, PaginationLink, PaginationNext, PaginationPrevious } from '@/components/shadcn-ui/pagination'
+import CharacterPageSkeleton from './skeleton'
 
 export default function Home() {
   const { pageInfo,characters, isloading, fetchCharacters } = ProfileApi()
@@ -100,10 +101,12 @@ export default function Home() {
           <hr className='flex-1 border-t-2 border-[#42b1cc]' />
         </div>
 
-        {/* Loading State */}
+        {/* Skeleton Loading State */}
         {isloading && (
-          <div className='flex items-center justify-center py-20'>
-            <Loader2 className='h-12 w-12 animate-spin text-[#42b1cc]' />
+          <div className='flex h-full w-full flex-col items-center justify-center gap-10'>
+            {[...Array(3)].map((_, index) => (
+              <CharacterPageSkeleton key={index} />
+            ))}
           </div>
         )}
 
@@ -190,12 +193,7 @@ export default function Home() {
         )}
         
 
-        {/* No Characters State */}
-        {!isloading && (!characters || characters.length === 0) && (
-          <div className='py-20 text-center text-white'>
-            <p>No characters found</p>
-          </div>
-        )}
+       
       </div>
     </div>
   )

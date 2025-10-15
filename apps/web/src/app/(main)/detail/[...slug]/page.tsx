@@ -23,6 +23,8 @@ import {
 } from '@/lib/local-storage'
 import toast from 'react-hot-toast'
 import Link from 'next/link'
+import LoadingOverlay from '@/components/loading-overlay'
+import { locationSchema } from '@/lib/validations/location.validation'
 
 export default function DetailPage() {
   const { characterDetail, isloading, fetchCharacterById } = CharacterApi()
@@ -60,47 +62,55 @@ export default function DetailPage() {
     }
   }
 
-  const handleAssignLocation = () => {
-    if (!locationName.trim()) {
-      toast.error('Please enter a location name')
-      return
-    }
+    const handleAssignLocation = async () => {
+    try {
+      // Validate with Yup schema
+      await locationSchema.validate({ locationName }, { abortEarly: false })
 
-    const locations = getLocations()
-    const existingLocation = locations.find(
-      (loc) =>
-        loc.locationName.toLowerCase() === locationName.trim().toLowerCase()
-    )
+      const locations = getLocations()
+      const existingLocation = locations.find(
+        (loc) =>
+          loc.locationName.toLowerCase() === locationName.trim().toLowerCase()
+      )
 
-    if (
-      existingLocation &&
-      !existingLocation.characterIds.includes(characterId || '')
-    ) {
-      const success = assignCharacterToLocation(
-        characterId || '',
-        locationName.trim()
-      )
-      if (success) {
-        setAssignedLocation(locationName.trim())
-        setIsDialogOpen(false)
-        setLocationName('')
-        toast.success(`Character assigned to ${locationName.trim()}`)
+      if (
+        existingLocation &&
+        !existingLocation.characterIds.includes(characterId || '')
+      ) {
+        const success = assignCharacterToLocation(
+          characterId || '',
+          locationName.trim()
+        )
+        if (success) {
+          setAssignedLocation(locationName.trim())
+          setIsDialogOpen(false)
+          setLocationName('')
+          toast.success(`Character assigned to ${locationName.trim()}`)
+        }
+      } else if (!existingLocation) {
+        const success = assignCharacterToLocation(
+          characterId || '',
+          locationName.trim()
+        )
+        if (success) {
+          setAssignedLocation(locationName.trim())
+          setIsDialogOpen(false)
+          setLocationName('')
+          toast.success(`New location created: ${locationName.trim()}`)
+        }
+      } else {
+        toast.error('Character already in this location')
       }
-    } else if (!existingLocation) {
-      const success = assignCharacterToLocation(
-        characterId || '',
-        locationName.trim()
-      )
-      if (success) {
-        setAssignedLocation(locationName.trim())
-        setIsDialogOpen(false)
-        setLocationName('')
-        toast.success(`New location created: ${locationName.trim()}`)
+    } catch (error: any) {
+      // Handle Yup validation errors
+      if (error.name === 'ValidationError') {
+        toast.error(error.errors[0])
+      } else {
+        toast.error('Something went wrong')
       }
-    } else {
-      toast.error('Character already in this location')
     }
   }
+
 
   // Wait for client-side mount
   if (!isMounted) {
@@ -114,9 +124,7 @@ export default function DetailPage() {
   // Show loading state
   if (isloading) {
     return (
-      <div className="flex min-h-screen w-full items-center justify-center bg-[url('/space.png')] bg-cover bg-center p-6">
-        <Loader2 className='text-primary h-12 w-12 animate-spin' />
-      </div>
+      <LoadingOverlay isLoading={isloading} />
     )
   }
 
@@ -205,14 +213,14 @@ export default function DetailPage() {
               </div>
             )}
 
-            <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
-              <DialogTrigger asChild>
+            <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen} >
+              <DialogTrigger asChild >
                 <Button className='bg-[#bede3d] rounded-[10px] hover:bg-primary/90 text-primary-foreground shadow-portal w-full'>
                   <MapPin className='mr-2 h-4 w-4' />
                   {assignedLocation ? 'Change Location' : 'Assign to Location'}
                 </Button>
               </DialogTrigger>
-              <DialogContent className='bg-card border-border/50'>
+              <DialogContent className='bg-card border-[#42b1cc] bg-gradient-to-br from-[#0d5759]/90 via-[#165c5f]/80 to-[#1a4d4f]/90 shadow-[0_0_20px_rgba(66,177,204,0.6),inset_0_0_60px_rgba(66,177,204,0.2),inset_0_0_100px_rgba(66,177,204,0.1)] backdrop-blur-sm text-white  rounded-[10px]'>
                 <DialogHeader>
                   <DialogTitle>Assign Character to Location</DialogTitle>
                   <DialogDescription>
@@ -236,7 +244,7 @@ export default function DetailPage() {
                   </div>
                   <Button
                     onClick={handleAssignLocation}
-                    className='bg-primary hover:bg-primary/90 text-primary-foreground w-full'
+                    className='bg-[#bede3d] rounded-[10px] hover:bg-primary/90 text-primary-foreground w-full'
                   >
                     Assign Location
                   </Button>
