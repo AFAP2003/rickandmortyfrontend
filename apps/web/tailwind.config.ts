@@ -1,23 +1,20 @@
 import type { Config } from 'tailwindcss'
+
 export default {
   darkMode: ['class'],
   content: [
-    './src/app/**/*.{js,ts,jsx,tsx,mdx}',
     './src/pages/**/*.{js,ts,jsx,tsx,mdx}',
-    './src/components/**/*.{js,ts,jsx,tsx,mdx}'
+    './src/components/**/*.{js,ts,jsx,tsx,mdx}',
+    './src/app/**/*.{js,ts,jsx,tsx,mdx}'
   ],
   theme: {
     extend: {
       colors: {
-        'navy-primary': 'var(--navy-primary)',
-        'navy-tertiary': 'var(--navy-tertiary)',
-        'blue-primary': 'var(--blue-primary)',
-        'blue-secondary': 'var(--blue-secondary)',
-        'orange-primary': 'var(--orange-primary)',
-        'gray-primary': 'var(--gray-primary)',
-        'gray-description': 'var(--gray-description)',
-        'gray-secondary': 'var(--gray-secondary)',
-        'light-primary': 'var(--light-primary)',
+        'primary-color': 'var(--primary-color)',
+        'secondary-color': 'var(--secondary-color)',
+        'text-primary': 'var(--text-primary)',
+        'text-secondary': 'var(--text-secondary)',
+        'background-active': 'var(--background-active)',
         'background-inactive': 'var(--background-inactive)',
         'dark-primary': 'var(--dark-primary)',
         'light-background': 'var(--light-background)',
@@ -62,9 +59,6 @@ export default {
           '5': 'hsl(var(--chart-5))'
         }
       },
-      screens: {
-        xs: '450px'
-      },
       borderRadius: {
         lg: 'var(--radius)',
         md: 'calc(var(--radius) - 2px)',
@@ -76,6 +70,20 @@ export default {
       }
     }
   },
+  safelist: [
+    // Status colors - background
+    'bg-green-500',
+    'bg-red-500',
+    'bg-gray-500',
+    // Status colors - text
+    'text-green-400',
+    'text-red-400',
+    'text-gray-400',
+    // Status colors - shadows
+    'shadow-[0_0_8px_rgba(34,197,94,1)]',
+    'shadow-[0_0_8px_rgba(239,68,68,1)]',
+    'shadow-[0_0_8px_rgba(156,163,175,1)]',
+  ],
   plugins: [
     require('tailwindcss-animate'),
     require('daisyui'),
