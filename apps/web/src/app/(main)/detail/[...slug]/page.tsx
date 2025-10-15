@@ -143,7 +143,7 @@ export default function DetailPage() {
       <Link href='/'>
         <Button
           variant='outline'
-          className='border-primary/50 hover:bg-primary/10 mb-6 rounded-[7px] border-[#42b1cc] bg-black text-white'
+          className='border-primary/50 hover:bg-black mb-6 rounded-[7px] border-[#42b1cc] bg-black text-white'
         >
           <ArrowLeft className='mr-2 h-4 w-4 text-white' />
           Back to Characters
@@ -203,7 +203,7 @@ export default function DetailPage() {
             </div>
 
             {assignedLocation && (
-              <div className='bg-accent/10 border-accent/30 flex items-center gap-2 rounded-lg border p-4'>
+              <div className='bg-accent/10  flex items-center gap-2 rounded-lg border-0 p-4'>
                 <CheckCircle2 className='text-accent h-5 w-5' />
                 <div className='flex-1'>
                   <p className='text-muted-foreground text-sm'>Assigned to</p>
