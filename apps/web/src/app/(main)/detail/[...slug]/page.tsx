@@ -26,6 +26,7 @@ import Link from 'next/link'
 import LoadingOverlay from '@/components/loading-overlay'
 import { locationSchema } from '@/lib/validations/location.validation'
 import NotFound from '@/app/not-found'
+import { getStatusColor } from '@/lib/utils'
 
 export default function DetailPage() {
   const { characterDetail, isloading, fetchCharacterById } = CharacterApi()
@@ -52,24 +53,12 @@ export default function DetailPage() {
     }
   }, [isMounted, characterId])
 
-  const getStatusColor = (status: string) => {
-    switch (status?.toLowerCase()) {
-      case 'alive':
-        return 'bg-green-500 text-white'
-      case 'dead':
-        return 'bg-red-500 text-white'
-      default:
-        return 'bg-gray-500 text-white'
-    }
-  }
-
-    const handleAssignLocation = async () => {
+  const handleAssignLocation = async () => {
     try {
-      // Validate with Yup schema
       await locationSchema.validate({ locationName }, { abortEarly: false })
 
       const locations = getLocations()
-      const existingLocation = locations.find( 
+      const existingLocation = locations.find(
         (loc) =>
           loc.locationName.toLowerCase() === locationName.trim().toLowerCase()
       )
@@ -103,7 +92,6 @@ export default function DetailPage() {
         toast.error('Character already in this location')
       }
     } catch (error: any) {
-      // Handle Yup validation errors
       if (error.name === 'ValidationError') {
         toast.error(error.errors[0])
       } else {
@@ -112,11 +100,10 @@ export default function DetailPage() {
     }
   }
 
-
   // Wait for client-side mount
   if (!isMounted) {
     return (
-      <div className="flex min-h-screen w-full items-center justify-center bg-[url('/space.png')] bg-cover bg-center p-6">
+      <div className="flex min-h-screen w-full items-center justify-center bg-[url('https://res.cloudinary.com/dpjh6i5qm/image/upload/v1760512755/space_vm6wx7.png')] bg-cover bg-center p-6">
         <Loader2 className='text-primary h-12 w-12 animate-spin' />
       </div>
     )
@@ -124,26 +111,24 @@ export default function DetailPage() {
 
   // Show loading state
   if (isloading) {
-    return (
-      <LoadingOverlay isLoading={isloading} />
-    )
+    return <LoadingOverlay isLoading={isloading} />
   }
 
   // Show error state if data failed to load
   if (!characterDetail) {
     return (
-      <div className="flex min-h-screen w-full items-center justify-center bg-[url('/space.png')] bg-cover bg-center p-6">
-        <NotFound/>
+      <div className="flex min-h-screen w-full items-center justify-center bg-[url('https://res.cloudinary.com/dpjh6i5qm/image/upload/v1760512755/space_vm6wx7.png')] bg-cover bg-center p-6">
+        <NotFound />
       </div>
     )
   }
 
   return (
-    <div className="min-h-screen bg-[url('/space.png')] bg-cover bg-center bg-no-repeat p-6">
+    <div className="min-h-screen bg-[url('https://res.cloudinary.com/dpjh6i5qm/image/upload/v1760512755/space_vm6wx7.png')] bg-cover bg-center bg-no-repeat p-6">
       <Link href='/'>
         <Button
           variant='outline'
-          className='border-primary/50 hover:bg-black mb-6 rounded-[7px] border-[#42b1cc] bg-black text-white'
+          className='border-primary/50 mb-6 rounded-[7px] border-[#42b1cc] bg-black text-white hover:bg-black'
         >
           <ArrowLeft className='mr-2 h-4 w-4 text-white' />
           Back to Characters
@@ -165,7 +150,9 @@ export default function DetailPage() {
               <h1 className='text-foreground text-3xl font-bold md:text-4xl'>
                 {characterDetail.name}
               </h1>
-              <Badge className={`${getStatusColor(characterDetail.status)} rounded-full border-0`}>
+              <Badge
+                className={`${getStatusColor(characterDetail.status)} rounded-full border-0`}
+              >
                 {characterDetail.status}
               </Badge>
             </div>
@@ -203,7 +190,7 @@ export default function DetailPage() {
             </div>
 
             {assignedLocation && (
-              <div className='bg-accent/10  flex items-center gap-2 rounded-lg border-0 p-4'>
+              <div className='bg-accent/10 flex items-center gap-2 rounded-lg border-0 p-4'>
                 <CheckCircle2 className='text-accent h-5 w-5' />
                 <div className='flex-1'>
                   <p className='text-muted-foreground text-sm'>Assigned to</p>
@@ -214,14 +201,14 @@ export default function DetailPage() {
               </div>
             )}
 
-            <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen} >
-              <DialogTrigger asChild >
-                <Button className='bg-[#bede3d] rounded-[10px] hover:bg-primary/90 text-primary-foreground shadow-portal w-full'>
+            <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
+              <DialogTrigger asChild>
+                <Button className='hover:bg-primary/90 text-primary-foreground shadow-portal w-full rounded-[10px] bg-[#bede3d]'>
                   <MapPin className='mr-2 h-4 w-4' />
                   {assignedLocation ? 'Change Location' : 'Assign to Location'}
                 </Button>
               </DialogTrigger>
-              <DialogContent className='bg-card border-[#42b1cc] bg-gradient-to-br from-[#0d5759]/90 via-[#165c5f]/80 to-[#1a4d4f]/90 shadow-[0_0_20px_rgba(66,177,204,0.6),inset_0_0_60px_rgba(66,177,204,0.2),inset_0_0_100px_rgba(66,177,204,0.1)] backdrop-blur-sm text-white  rounded-[10px]'>
+              <DialogContent className='bg-card rounded-[10px] border-[#42b1cc] bg-gradient-to-br from-[#0d5759]/90 via-[#165c5f]/80 to-[#1a4d4f]/90 text-white shadow-[0_0_20px_rgba(66,177,204,0.6),inset_0_0_60px_rgba(66,177,204,0.2),inset_0_0_100px_rgba(66,177,204,0.1)] backdrop-blur-sm'>
                 <DialogHeader>
                   <DialogTitle>Assign Character to Location</DialogTitle>
                   <DialogDescription>
@@ -245,7 +232,7 @@ export default function DetailPage() {
                   </div>
                   <Button
                     onClick={handleAssignLocation}
-                    className='bg-[#bede3d] rounded-[10px] hover:bg-primary/90 text-primary-foreground w-full'
+                    className='hover:bg-primary/90 text-primary-foreground w-full rounded-[10px] bg-[#bede3d]'
                   >
                     Assign Location
                   </Button>
@@ -257,7 +244,7 @@ export default function DetailPage() {
       </div>
 
       {characterDetail.episode && characterDetail.episode.length > 0 && (
-        <Card className='mt-8  border-[#42b1cc] bg-gradient-to-br from-[#0d5759]/90 via-[#165c5f]/80 to-[#1a4d4f]/90 p-6 shadow-[0_0_20px_rgba(66,177,204,0.6),inset_0_0_60px_rgba(66,177,204,0.2),inset_0_0_100px_rgba(66,177,204,0.1)] backdrop-blur-sm'>
+        <Card className='mt-8 border-[#42b1cc] bg-gradient-to-br from-[#0d5759]/90 via-[#165c5f]/80 to-[#1a4d4f]/90 p-6 shadow-[0_0_20px_rgba(66,177,204,0.6),inset_0_0_60px_rgba(66,177,204,0.2),inset_0_0_100px_rgba(66,177,204,0.1)] backdrop-blur-sm'>
           <h2 className='text-foreground mb-4 text-2xl font-bold text-white'>
             Episodes ({characterDetail.episode.length})
           </h2>
@@ -265,12 +252,14 @@ export default function DetailPage() {
             {characterDetail.episode.map((episode: any) => (
               <div
                 key={episode.id}
-                className='bg-muted/30 border-border/30 hover:border-primary/50 rounded-lg hover:border-[#bede3d] p-3 transition-colors'
+                className='bg-muted/30 border-border/30 hover:border-primary/50 rounded-lg p-3 transition-colors hover:border-[#bede3d]'
               >
                 <p className='text-accent font-mono text-xs text-[#bede3d]'>
                   {episode.episode}
                 </p>
-                <p className='text-foreground text-sm text-white'>{episode.name}</p>
+                <p className='text-foreground text-sm text-white'>
+                  {episode.name}
+                </p>
               </div>
             ))}
           </div>

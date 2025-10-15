@@ -1,8 +1,8 @@
-import { Card } from "@/components/shadcn-ui/card";
+import { Card } from '@/components/shadcn-ui/card'
 
 export default function LocationPageSkeleton() {
   return (
-        <Card className='animate-pulse overflow-hidden border-2 border-black bg-black'>
+    <Card className='animate-pulse overflow-hidden border-2 border-black bg-black'>
       <div className='flex gap-4 p-4'>
         <div className='h-20 w-20 rounded-[10px] bg-gray-700' />
         <div className='min-w-0 flex-1 space-y-2'>

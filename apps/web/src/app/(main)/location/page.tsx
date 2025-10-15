@@ -2,10 +2,11 @@
 import { Card } from '@/components/shadcn-ui/card'
 import CharacterApi from '@/lib/apis/character.api'
 import { getLocations } from '@/lib/local-storage'
-import { Badge, Loader2, MapPin, Users } from 'lucide-react'
+import { MapPin, Users } from 'lucide-react'
 import Link from 'next/link'
 import { useEffect, useState } from 'react'
 import LocationPageSkeleton from './skeleton'
+import { getStatusColor } from '@/lib/utils'
 
 export default function locationPage() {
   const { characterDetail, isloading, fetchCharacterById } = CharacterApi()
@@ -19,8 +20,6 @@ export default function locationPage() {
       setCharacters([])
       return
     }
-
-    // Fetch characters using the IDs from the location
     const results = await Promise.all(
       location.characterIds.map((id: string) => fetchCharacterById(id))
     )
@@ -37,32 +36,9 @@ export default function locationPage() {
     }
   }, [selectedLocation])
 
-  const getStatusColor = (status: string) => {
-    switch (status?.toLowerCase()) {
-      case 'alive':
-        return {
-          bg: 'bg-green-500',
-          text: 'text-green-400',
-          shadow: 'shadow-[0_0_8px_rgba(34,197,94,1)]'
-        }
-      case 'dead':
-        return {
-          bg: 'bg-red-500',
-          text: 'text-red-400',
-          shadow: 'shadow-[0_0_8px_rgba(239,68,68,1)]'
-        }
-      default: // unknown or any other status
-        return {
-          bg: 'bg-gray-500',
-          text: 'text-gray-400',
-          shadow: 'shadow-[0_0_8px_rgba(156,163,175,1)]'
-        }
-    }
-  }
-
   return (
     <div className='animate-fade-in space-y-8'>
-      <div className='grid gap-6 bg-[url("/space.png")] bg-cover bg-center bg-no-repeat p-6 lg:grid-cols-3'>
+      <div className='grid gap-6 bg-[url("https://res.cloudinary.com/dpjh6i5qm/image/upload/v1760512755/space_vm6wx7.png")] bg-cover bg-center bg-no-repeat p-6 lg:grid-cols-3'>
         {/* Locations List */}
         <div className='space-y-3 lg:col-span-1'>
           <h2 className='text-foreground mb-4 flex items-center gap-2 text-xl font-bold'>
@@ -116,7 +92,7 @@ export default function locationPage() {
                     <LocationPageSkeleton key={index} />
                   ))}
                 </div>
-              )  : (
+              ) : (
                 <div className='grid gap-4 sm:grid-cols-2'>
                   {characters.map((character: any) => {
                     const statusColors = getStatusColor(character.status)

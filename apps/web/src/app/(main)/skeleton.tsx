@@ -1,4 +1,4 @@
-import { Card, CardContent, CardHeader } from "@/components/shadcn-ui/card";
+import { Card, CardContent, CardHeader } from '@/components/shadcn-ui/card'
 
 export default function CharacterPageSkeleton() {
   return (

@@ -11,9 +11,15 @@ import {
 import { useEffect, useState } from 'react'
 import ProfileApi from '@/lib/apis/character.api'
 import Link from 'next/link'
-import { Loader2 } from 'lucide-react'
-import { Pagination, PaginationContent, PaginationItem, PaginationNext, PaginationPrevious } from '@/components/shadcn-ui/pagination'
+import {
+  Pagination,
+  PaginationContent,
+  PaginationItem,
+  PaginationNext,
+  PaginationPrevious
+} from '@/components/shadcn-ui/pagination'
 import CharacterPageSkeleton from './skeleton'
+import { getStatusColor } from '@/lib/utils'
 
 export default function Home() {
   const { pageInfo, characters, isloading, fetchCharacters } = ProfileApi()
@@ -33,29 +39,6 @@ export default function Home() {
     return () => clearTimeout(timeoutId)
   }, [searchQuery, currentPage])
 
-  const getStatusColor = (status: string) => {
-    switch (status?.toLowerCase()) {
-      case 'alive':
-        return {
-          bg: 'bg-green-500',
-          text: 'text-green-400',
-          shadow: 'shadow-[0_0_8px_rgba(34,197,94,1)]'
-        }
-      case 'dead':
-        return {
-          bg: 'bg-red-500',
-          text: 'text-red-400',
-          shadow: 'shadow-[0_0_8px_rgba(239,68,68,1)]'
-        }
-      default:
-        return {
-          bg: 'bg-gray-500',
-          text: 'text-gray-400',
-          shadow: 'shadow-[0_0_8px_rgba(156,163,175,1)]'
-        }
-    }
-  }
-
   const handleSearch = (value: string) => {
     setSearchQuery(value)
     setCurrentPage(1)
@@ -67,29 +50,30 @@ export default function Home() {
   }
 
   return (
-    <div className="min-h-screen w-full bg-[url('/space.png')] bg-cover bg-center bg-no-repeat p-6">
+    <div className="min-h-screen w-full bg-[url('https://res.cloudinary.com/dpjh6i5qm/image/upload/v1760512755/space_vm6wx7.png')] bg-cover bg-center bg-no-repeat p-6">
       {/* Container - max width for large screens */}
       <div className='mx-auto flex min-h-screen w-full max-w-7xl flex-col items-center justify-start gap-10'>
-        
         {/* Logo - responsive sizing */}
-        <Image 
-          src='/rick&mortytitle.png' 
-          alt='Logo' 
-          width={300} 
+        <Image
+          src='https://res.cloudinary.com/dpjh6i5qm/image/upload/v1760512612/rick_mortytitle_n7sl2c.png'
+          alt='Logo'
+          width={300}
           height={300}
           className='h-auto w-64 md:w-80 lg:w-96'
         />
-        
+
         {/* Search Box - max width on large screens */}
         <div className='w-full max-w-2xl'>
           <SearchBox onSearch={handleSearch} />
         </div>
-        
+
         {/* Title Section */}
         <div className='flex h-full w-full items-center justify-center gap-4'>
           <hr className='flex-1 border-t-2 border-[#42b1cc]' />
           <h1 className='whitespace-nowrap text-sm font-bold text-white md:text-base lg:text-lg'>
-            {searchQuery ? `Search results for "${searchQuery}"` : 'List of Characters'}
+            {searchQuery
+              ? `Search results for "${searchQuery}"`
+              : 'List of Characters'}
           </h1>
           <hr className='flex-1 border-t-2 border-[#42b1cc]' />
         </div>
@@ -108,7 +92,7 @@ export default function Home() {
           <div className='grid w-full grid-cols-1 gap-16 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4'>
             {characters.map((character, index) => {
               const statusColors = getStatusColor(character.status)
-              
+
               return (
                 <Link
                   href={`/detail/${character.id}`}
@@ -132,11 +116,17 @@ export default function Home() {
                         {character.name}
                       </CardTitle>
                       <CardDescription className='flex flex-col items-center justify-center gap-2 text-center text-sm'>
-                        <span className='text-gray-300'>{character.species}</span>
+                        <span className='text-gray-300'>
+                          {character.species}
+                        </span>
 
                         <div className='flex items-center justify-center gap-2'>
-                          <span className={`h-2 w-2 rounded-full ${statusColors.bg} ${statusColors.shadow}`}></span>
-                          <span className={statusColors.text}>{character.status}</span>
+                          <span
+                            className={`h-2 w-2 rounded-full ${statusColors.bg} ${statusColors.shadow}`}
+                          ></span>
+                          <span className={statusColors.text}>
+                            {character.status}
+                          </span>
                         </div>
                       </CardDescription>
                     </CardHeader>
@@ -157,8 +147,10 @@ export default function Home() {
           <Pagination className='py-10'>
             <PaginationContent className='gap-2 md:gap-4'>
               <PaginationItem>
-                <PaginationPrevious 
-                  onClick={() => currentPage > 1 && handlePageClick(currentPage - 1)}
+                <PaginationPrevious
+                  onClick={() =>
+                    currentPage > 1 && handlePageClick(currentPage - 1)
+                  }
                   className={`cursor-pointer border-[#42b1cc] bg-black text-white hover:bg-[#42b1cc]/20 ${
                     currentPage === 1 ? 'pointer-events-none opacity-50' : ''
                   }`}
@@ -172,10 +164,15 @@ export default function Home() {
               </div>
 
               <PaginationItem>
-                <PaginationNext 
-                  onClick={() => currentPage < pageInfo.pages && handlePageClick(currentPage + 1)}
+                <PaginationNext
+                  onClick={() =>
+                    currentPage < pageInfo.pages &&
+                    handlePageClick(currentPage + 1)
+                  }
                   className={`cursor-pointer border-[#42b1cc] bg-black text-white hover:bg-[#42b1cc]/20 ${
-                    currentPage === pageInfo.pages ? 'pointer-events-none opacity-50' : ''
+                    currentPage === pageInfo.pages
+                      ? 'pointer-events-none opacity-50'
+                      : ''
                   }`}
                 />
               </PaginationItem>
@@ -187,7 +184,7 @@ export default function Home() {
         {!isloading && (!characters || characters.length === 0) && (
           <div className='py-20 text-center text-white'>
             <p className='text-base md:text-lg'>
-              {searchQuery 
+              {searchQuery
                 ? `No characters found for "${searchQuery}"`
                 : 'No characters found'}
             </p>

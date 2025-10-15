@@ -1,13 +1,15 @@
-import { useState } from "react"
+import { useState } from 'react'
 
 interface SearchBoxProps {
   onSearch: (value: string) => void
   defaultValue?: string
 }
-export default function SearchBox({onSearch, defaultValue = ''}: SearchBoxProps) {
-   const [searchValue, setSearchValue] = useState(defaultValue)
+export default function SearchBox({
+  onSearch,
+  defaultValue = ''
+}: SearchBoxProps) {
+  const [searchValue, setSearchValue] = useState(defaultValue)
 
-   
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value
     setSearchValue(value)

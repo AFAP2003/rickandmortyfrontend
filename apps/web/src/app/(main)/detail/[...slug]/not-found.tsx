@@ -1,8 +1,8 @@
-// app/characters/[id]/page.tsx
 import NotFound from '@/app/not-found'
 import { API_URL } from '@/lib/constants'
 
 export default async function CharacterPage({ params }: { params: { id: string } }) {
+
   // Fetch character data
   const res = await fetch(`${API_URL}/${params.id}`)
   const data = await res.json()
